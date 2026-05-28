@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ["flutter"]
+
+[phases.build]
+cmds = ["flutter build web"]
+
+[start]
+cmd = "npx serve build/web"

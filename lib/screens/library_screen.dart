@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import '../services/image_service.dart';
-import '../models/song.dart';
+import '../data/songs_data.dart';
+import '../song_model.dart';
 import 'player_screen.dart';
 
 class LibraryScreen extends StatelessWidget {
-  const LibraryScreen({super.key});
+  LibraryScreen({super.key});
 
-  final List<Map<String, String>> likedSongs = const [
-    {"title": "Blinding Lights", "artist": "The Weeknd", "imageId": "album-1"},
-    {"title": "Levitating", "artist": "Dua Lipa", "imageId": "album-3"},
-    {"title": "Believer", "artist": "Imagine Dragons", "imageId": "album-1"},
-  ];
+  final List<Song> likedSongs = songs.take(3).toList();
 
   final List<Map<String, dynamic>> playlists = const [
     {
@@ -151,7 +148,8 @@ class LibraryScreen extends StatelessWidget {
               itemCount: likedSongs.length,
               itemBuilder: (context, index) {
                 final song = likedSongs[index];
-                final imageUrl = ImageService.getImageUrl(song["imageId"]!);
+                final imageUrl =
+                    song.imageUrl ?? ImageService.getImageUrl('album-1');
 
                 return Container(
                   margin: const EdgeInsets.symmetric(
@@ -184,14 +182,14 @@ class LibraryScreen extends StatelessWidget {
                       ),
                     ),
                     title: Text(
-                      song["title"]!,
+                      song.title,
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     subtitle: Text(
-                      song["artist"]!,
+                      song.artist,
                       style: const TextStyle(color: Colors.grey),
                     ),
                     trailing: const Icon(
@@ -200,15 +198,10 @@ class LibraryScreen extends StatelessWidget {
                       size: 20,
                     ),
                     onTap: () {
-                      final songObj = Song(
-                        title: song["title"]!,
-                        artist: song["artist"]!,
-                        imageUrl: imageUrl,
-                      );
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => PlayerScreen(song: songObj),
+                          builder: (_) => PlayerScreen(song: song),
                         ),
                       );
                     },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/image_service.dart';
-import '../models/song.dart';
+import '../data/songs_data.dart';
+import '../song_model.dart';
 import 'player_screen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -14,15 +15,6 @@ class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
-  final List<Map<String, String>> allSongs = const [
-    {"title": "Blinding Lights", "artist": "The Weeknd", "imageId": "album-1"},
-    {"title": "Shape of You", "artist": "Ed Sheeran", "imageId": "album-2"},
-    {"title": "Levitating", "artist": "Dua Lipa", "imageId": "album-3"},
-    {"title": "Believer", "artist": "Imagine Dragons", "imageId": "album-1"},
-    {"title": "Heat Waves", "artist": "Glass Animals", "imageId": "album-2"},
-    {"title": "Peaches", "artist": "Justin Bieber", "imageId": "album-3"},
-  ];
-
   final List<String> genres = [
     "Pop",
     "Rock",
@@ -32,19 +24,15 @@ class _SearchScreenState extends State<SearchScreen> {
     "Classical",
   ];
 
-  List<Map<String, String>> get filteredSongs {
+  List<Song> get filteredSongs {
     if (_searchQuery.isEmpty) {
-      return allSongs;
+      return songs;
     }
-    return allSongs
+    return songs
         .where(
           (song) =>
-              song['title']!.toLowerCase().contains(
-                _searchQuery.toLowerCase(),
-              ) ||
-              song['artist']!.toLowerCase().contains(
-                _searchQuery.toLowerCase(),
-              ),
+              song.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+              song.artist.toLowerCase().contains(_searchQuery.toLowerCase()),
         )
         .toList();
   }
@@ -132,9 +120,8 @@ class _SearchScreenState extends State<SearchScreen> {
                     itemCount: filteredSongs.length,
                     itemBuilder: (context, index) {
                       final song = filteredSongs[index];
-                      final imageUrl = ImageService.getImageUrl(
-                        song["imageId"]!,
-                      );
+                      final imageUrl =
+                          song.imageUrl ?? ImageService.getImageUrl('album-1');
 
                       return Container(
                         margin: const EdgeInsets.symmetric(
@@ -167,14 +154,14 @@ class _SearchScreenState extends State<SearchScreen> {
                             ),
                           ),
                           title: Text(
-                            song["title"]!,
+                            song.title,
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                           subtitle: Text(
-                            song["artist"]!,
+                            song.artist,
                             style: const TextStyle(color: Colors.grey),
                           ),
                           trailing: const Icon(
@@ -183,15 +170,10 @@ class _SearchScreenState extends State<SearchScreen> {
                             size: 24,
                           ),
                           onTap: () {
-                            final songObj = Song(
-                              title: song["title"]!,
-                              artist: song["artist"]!,
-                              imageUrl: imageUrl,
-                            );
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => PlayerScreen(song: songObj),
+                                builder: (_) => PlayerScreen(song: song),
                               ),
                             );
                           },

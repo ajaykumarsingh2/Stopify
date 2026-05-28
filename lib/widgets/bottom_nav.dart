@@ -13,11 +13,7 @@ class BottomNav extends StatefulWidget {
 class _BottomNavState extends State<BottomNav> {
   int _index = 0;
 
-  final pages = [
-    const HomeScreen(),
-    const SearchScreen(),
-    const LibraryScreen(),
-  ];
+  final pages = [const HomeScreen(), const SearchScreen(), LibraryScreen()];
 
   @override
   Widget build(BuildContext context) {

@@ -4,12 +4,8 @@ class Song {
   final String url;
   final String? imageUrl;
 
-  Song({
-    required this.title,
-    required this.artist,
-    String? url,
-    this.imageUrl,
-  }) : url = url ?? '';
+  Song({required this.title, required this.artist, String? url, this.imageUrl})
+    : url = url ?? '';
 
   factory Song.fromMap(Map<String, dynamic> map) {
     return Song(
