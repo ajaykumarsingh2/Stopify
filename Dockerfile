@@ -1,19 +1,14 @@
 # Stage 1: Build Flutter web app
-FROM ghcr.io/cirruslabs/flutter:stable AS build
+FROM ghcr.io/cirruslabs/flutter:3.32.0 AS build
 
 WORKDIR /app
 COPY . .
-RUN flutter build web --release
+RUN flutter pub get && flutter build web --release
 
 # Stage 2: Serve with Caddy
 FROM caddy:2-alpine
 
 COPY --from=build /app/build/web /srv
-COPY <<EOF /etc/caddy/Caddyfile
-:{$PORT}
-root * /srv
-file_server
-try_files {path} /index.html
-EOF
+COPY Caddyfile /etc/caddy/Caddyfile
 
-EXPOSE ${PORT}
+EXPOSE 8080
