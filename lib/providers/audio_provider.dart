@@ -11,6 +11,7 @@ class AudioProvider extends ChangeNotifier {
   bool get isPlaying => _isPlaying;
 
   AudioProvider() {
+    // Listen to player state changes
     _audioPlayer.playingStream.listen((playing) {
       _isPlaying = playing;
       notifyListeners();
@@ -18,25 +19,32 @@ class AudioProvider extends ChangeNotifier {
   }
 
   void playSong(Song song) async {
-    if (_currentSong?.id == song.id) {
-      togglePlay();
-    } else {
-      _currentSong = song;
-      notifyListeners();
-      try {
+    try {
+      if (_currentSong?.id == song.id) {
+        togglePlay();
+      } else {
+        _currentSong = song;
+        notifyListeners();
+
+        // Naya gaana load aur play karne ka sahi tarika
+        await _audioPlayer.stop(); // Purana gaana band karo
         await _audioPlayer.setUrl(song.audioUrl);
-        _audioPlayer.play();
-      } catch (e) {
-        print("Error: $e");
+        await _audioPlayer.play();
       }
+    } catch (e) {
+      debugPrint("Audio Error: $e");
     }
   }
 
-  void togglePlay() {
-    if (_isPlaying) {
-      _audioPlayer.pause();
-    } else {
-      _audioPlayer.play();
+  void togglePlay() async {
+    try {
+      if (_isPlaying) {
+        await _audioPlayer.pause();
+      } else {
+        await _audioPlayer.play();
+      }
+    } catch (e) {
+      debugPrint("Toggle Error: $e");
     }
   }
 }

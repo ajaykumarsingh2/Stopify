@@ -7,105 +7,101 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Good evening",
-                style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white)),
-            const SizedBox(height: 24),
-
-            // Top Grid (6 Quick access songs)
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 3,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
+      backgroundColor: Colors.transparent, // Background wrapper se aayega
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF1A1A2E), Color(0xFF16213E), Colors.black],
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Search and Profile Row
+              Row(
+                children: [
+                  const Text("Recently Played",
+                      style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2)),
+                  const Spacer(),
+                  const Icon(Icons.search, color: Colors.grey, size: 28),
+                  const SizedBox(width: 20),
+                  const CircleAvatar(
+                      backgroundColor: Colors.purpleAccent,
+                      radius: 18,
+                      child: Icon(Icons.person, color: Colors.white, size: 20)),
+                ],
               ),
-              itemCount: 6,
-              itemBuilder: (context, index) {
-                final song = playlist[index];
-                return GestureDetector(
-                  onTap: () => context.read<AudioProvider>().playSong(song),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white10,
-                        borderRadius: BorderRadius.circular(8)),
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(8),
-                              bottomLeft: Radius.circular(8)),
-                          child: Image.network(song.coverUrl,
-                              width: 80, height: 80, fit: BoxFit.cover),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                            child: Text(song.title,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                                overflow: TextOverflow.ellipsis)),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+              const SizedBox(height: 30),
 
-            const SizedBox(height: 40),
-            const Text("Recently Played",
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white)),
-            const SizedBox(height: 20),
-
-            // All 15 Songs List
-            SizedBox(
-              height: 250,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
+              // Song Cards Grid
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4, // 4 cards in a row
+                  childAspectRatio: 0.75,
+                  crossAxisSpacing: 25,
+                  mainAxisSpacing: 25,
+                ),
                 itemCount: playlist.length,
                 itemBuilder: (context, index) {
                   final song = playlist[index];
-                  return GestureDetector(
-                    onTap: () => context.read<AudioProvider>().playSong(song),
-                    child: Container(
-                      width: 180,
-                      margin: const EdgeInsets.only(right: 24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.network(song.coverUrl,
-                                height: 180, width: 180, fit: BoxFit.cover),
-                          ),
-                          const SizedBox(height: 12),
-                          Text(song.title,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                              overflow: TextOverflow.ellipsis),
-                          Text(song.artist,
-                              style: const TextStyle(
-                                  color: Colors.grey, fontSize: 13)),
-                        ],
+                  return MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () => context.read<AudioProvider>().playSong(song),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(24),
+                          border:
+                              Border.all(color: Colors.white.withOpacity(0.1)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(18),
+                                  child: Image.network(song.coverUrl,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 5),
+                              child: Text(song.title,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                  overflow: TextOverflow.ellipsis),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                              child: Text(song.artist,
+                                  style: const TextStyle(
+                                      color: Colors.grey, fontSize: 13)),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );
                 },
               ),
-            ),
-          ],
+              const SizedBox(height: 100), // Bottom space for player
+            ],
+          ),
         ),
       ),
     );

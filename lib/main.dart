@@ -20,14 +20,36 @@ class StopifyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color(0xFF09090B), // Deep Black
+        scaffoldBackgroundColor: const Color(0xFF09090B),
       ),
-      home: MainWrapper(),
+      home: const MainWrapper(),
     );
   }
 }
 
-class MainWrapper extends StatelessWidget {
+class MainWrapper extends StatefulWidget {
+  const MainWrapper({super.key});
+  @override
+  State<MainWrapper> createState() => _MainWrapperState();
+}
+
+class _MainWrapperState extends State<MainWrapper> {
+  int _selectedIndex = 0; // Kis screen par hain hum
+
+  // Screens ki list
+  final List<Widget> _screens = [
+    HomeScreen(),
+    const Center(
+        child:
+            Text("Search Screen Coming Soon", style: TextStyle(fontSize: 24))),
+    const Center(
+        child:
+            Text("Library Screen Coming Soon", style: TextStyle(fontSize: 24))),
+    const Center(
+        child:
+            Text("AI Discovery Coming Soon", style: TextStyle(fontSize: 24))),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +57,7 @@ class MainWrapper extends StatelessWidget {
         children: [
           Row(
             children: [
-              // Sidebar (Exactly like image 2)
+              // Sidebar
               Container(
                 width: 240,
                 decoration: const BoxDecoration(
@@ -44,40 +66,35 @@ class MainWrapper extends StatelessWidget {
                       right: BorderSide(color: Colors.white12, width: 0.5)),
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(24.0),
+                    const Padding(
+                      padding: EdgeInsets.all(24.0),
                       child: Row(
                         children: [
-                          const Icon(Icons.music_note,
+                          Icon(Icons.music_note,
                               color: Colors.purpleAccent, size: 32),
-                          const SizedBox(width: 10),
+                          SizedBox(width: 10),
                           Text("Stopify",
                               style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1)),
+                                  fontSize: 24, fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
-                    _sideMenuItem(Icons.home_filled, "Home", true),
-                    _sideMenuItem(Icons.explore_outlined, "Explore", false),
-                    _sideMenuItem(Icons.auto_awesome, "AI Discovery", false),
-                    _sideMenuItem(
-                        Icons.library_music_outlined, "Library", false),
-                    const Spacer(),
+                    _sideMenuItem(Icons.home_filled, "Home", 0),
+                    _sideMenuItem(Icons.explore_outlined, "Explore", 1),
+                    _sideMenuItem(Icons.auto_awesome, "AI Discovery", 2),
+                    _sideMenuItem(Icons.library_music_outlined, "Library", 3),
                   ],
                 ),
               ),
-              // Main Content Area
-              Expanded(child: HomeScreen()),
+              // Dynamic Content
+              Expanded(child: _screens[_selectedIndex]),
             ],
           ),
-          // Floating Player (Image 2 style)
+          // Floating Player
           Positioned(
             bottom: 20,
-            left: 260, // Sidebar ke baad start hoga
+            left: 260,
             right: 20,
             child: MiniPlayer(),
           ),
@@ -86,22 +103,37 @@ class MainWrapper extends StatelessWidget {
     );
   }
 
-  Widget _sideMenuItem(IconData icon, String title, bool isActive) {
+  Widget _sideMenuItem(IconData icon, String title, int index) {
+    bool isActive = _selectedIndex == index;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: isActive ? Colors.white.withOpacity(0.05) : Colors.transparent,
-        ),
-        child: ListTile(
-          leading: Icon(icon,
-              color: isActive ? Colors.white : Colors.grey, size: 28),
-          title: Text(title,
-              style: TextStyle(
-                  color: isActive ? Colors.white : Colors.grey,
-                  fontWeight: FontWeight.w600)),
-          dense: true,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _selectedIndex = index; // Click par screen change hogi
+          });
+        },
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: isActive
+                ? Colors.purpleAccent.withOpacity(0.1)
+                : Colors.transparent,
+          ),
+          child: Row(
+            children: [
+              Icon(icon,
+                  color: isActive ? Colors.purpleAccent : Colors.grey,
+                  size: 26),
+              const SizedBox(width: 16),
+              Text(title,
+                  style: TextStyle(
+                      color: isActive ? Colors.white : Colors.grey,
+                      fontWeight: FontWeight.w600)),
+            ],
+          ),
         ),
       ),
     );

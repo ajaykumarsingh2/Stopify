@@ -14,16 +14,17 @@ class MiniPlayer extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1E).withOpacity(0.95),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white10),
+        boxShadow: const [BoxShadow(color: Colors.black54, blurRadius: 20)],
       ),
       child: Row(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
             child: Image.network(song.coverUrl,
-                width: 45,
-                height: 45,
+                width: 50,
+                height: 50,
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => const Icon(Icons.music_note)),
           ),
@@ -35,26 +36,31 @@ class MiniPlayer extends StatelessWidget {
               children: [
                 Text(song.title,
                     style: const TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.white)),
+                        fontWeight: FontWeight.bold, fontSize: 16)),
                 Text(song.artist,
-                    style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                    style: const TextStyle(color: Colors.grey, fontSize: 13)),
               ],
             ),
           ),
-          // PLAY / PAUSE BUTTON
+          // Play/Pause Button
+          IconButton(
+            icon: const Icon(Icons.skip_previous, color: Colors.white),
+            onPressed: () {},
+          ),
           GestureDetector(
-            onTap: () {
-              print("Play/Pause Clicked!"); // Debugging ke liye
-              audioProvider.togglePlay();
-            },
+            onTap: () => audioProvider.togglePlay(),
             child: CircleAvatar(
               backgroundColor: Colors.white,
-              radius: 18,
+              radius: 20,
               child: Icon(
                 audioProvider.isPlaying ? Icons.pause : Icons.play_arrow,
                 color: Colors.black,
               ),
             ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.skip_next, color: Colors.white),
+            onPressed: () {},
           ),
         ],
       ),
