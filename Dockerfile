@@ -12,3 +12,5 @@ COPY --from=build /app/build/web /usr/share/caddy
 COPY Caddyfile /etc/caddy/Caddyfile
 
 EXPOSE 8080
+
+CMD ["caddy", "file-server", "--listen", ":8080", "--root", "/usr/share/caddy"]
