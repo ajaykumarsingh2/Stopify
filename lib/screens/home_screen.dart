@@ -13,6 +13,7 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Header Text: Recently Played
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -37,7 +38,8 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 24),
-            // Horizontal Cards
+
+            // Song Cards Grid/List
             SizedBox(
               height: 280,
               child: ListView.builder(
@@ -61,12 +63,26 @@ class HomeScreen extends StatelessWidget {
                             padding: const EdgeInsets.all(12.0),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(16),
-                              child: Image.network(song.coverUrl,
-                                  height: 170,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover),
+                              // --- YE HAI SAFE IMAGE WALA PART ---
+                              child: Image.network(
+                                song.coverUrl,
+                                height: 170,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                // Agar image load nahi hui toh ye chalega
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    height: 170,
+                                    width: double.infinity,
+                                    color: Colors.grey.shade900,
+                                    child: const Icon(Icons.music_note,
+                                        color: Colors.purpleAccent, size: 50),
+                                  );
+                                },
+                              ),
                             ),
                           ),
+                          // Song Title
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Text(song.title,
@@ -74,6 +90,7 @@ class HomeScreen extends StatelessWidget {
                                     fontWeight: FontWeight.bold, fontSize: 18),
                                 overflow: TextOverflow.ellipsis),
                           ),
+                          // Artist Name
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Text(song.artist,
