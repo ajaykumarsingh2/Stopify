@@ -6,104 +6,43 @@ import '../providers/audio_provider.dart';
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent, // Background wrapper se aayega
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF1A1A2E), Color(0xFF16213E), Colors.black],
-          ),
-        ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Search and Profile Row
-              Row(
-                children: [
-                  const Text("Recently Played",
-                      style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.2)),
-                  const Spacer(),
-                  const Icon(Icons.search, color: Colors.grey, size: 28),
-                  const SizedBox(width: 20),
-                  const CircleAvatar(
-                      backgroundColor: Colors.purpleAccent,
-                      radius: 18,
-                      child: Icon(Icons.person, color: Colors.white, size: 20)),
-                ],
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(30),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text("Global Hits",
+            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 20),
+        GridView.builder(
+          shrinkWrap: true,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              mainAxisSpacing: 20,
+              crossAxisSpacing: 20,
+              childAspectRatio: 0.8),
+          itemCount: playlist.length,
+          itemBuilder: (c, i) {
+            final song = playlist[i];
+            return GestureDetector(
+              onTap: () => context.read<AudioProvider>().playSong(song),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white10,
+                    borderRadius: BorderRadius.circular(15)),
+                child: Column(children: [
+                  Expanded(
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child:
+                              Image.network(song.coverUrl, fit: BoxFit.cover))),
+                  Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(song.title, maxLines: 1)),
+                ]),
               ),
-              const SizedBox(height: 30),
-
-              // Song Cards Grid
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4, // 4 cards in a row
-                  childAspectRatio: 0.75,
-                  crossAxisSpacing: 25,
-                  mainAxisSpacing: 25,
-                ),
-                itemCount: playlist.length,
-                itemBuilder: (context, index) {
-                  final song = playlist[index];
-                  return MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: GestureDetector(
-                      onTap: () => context.read<AudioProvider>().playSong(song),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
-                          borderRadius: BorderRadius.circular(24),
-                          border:
-                              Border.all(color: Colors.white.withOpacity(0.1)),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(12.0),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(18),
-                                  child: Image.network(song.coverUrl,
-                                      width: double.infinity,
-                                      fit: BoxFit.cover),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 5),
-                              child: Text(song.title,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                  overflow: TextOverflow.ellipsis),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-                              child: Text(song.artist,
-                                  style: const TextStyle(
-                                      color: Colors.grey, fontSize: 13)),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 100), // Bottom space for player
-            ],
-          ),
-        ),
-      ),
+            );
+          },
+        )
+      ]),
     );
   }
 }

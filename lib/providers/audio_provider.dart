@@ -5,46 +5,58 @@ import '../models/song_model.dart';
 class AudioProvider extends ChangeNotifier {
   final AudioPlayer _audioPlayer = AudioPlayer();
   Song? _currentSong;
-  bool _isPlaying = false;
 
   Song? get currentSong => _currentSong;
-  bool get isPlaying => _isPlaying;
+  bool get isPlaying => _audioPlayer.playing;
+  Duration position = Duration.zero;
+  Duration duration = Duration.zero;
 
   AudioProvider() {
-    // Listen to player state changes
-    _audioPlayer.playingStream.listen((playing) {
-      _isPlaying = playing;
+    _audioPlayer.positionStream.listen((p) {
+      position = p;
+      notifyListeners();
+    });
+    _audioPlayer.durationStream.listen((d) {
+      duration = d ?? Duration.zero;
+      notifyListeners();
+    });
+    _audioPlayer.playerStateStream.listen((state) {
+      if (state.processingState == ProcessingState.completed) {
+        _audioPlayer.pause();
+        _audioPlayer.seek(Duration.zero);
+      }
       notifyListeners();
     });
   }
 
   void playSong(Song song) async {
     try {
-      if (_currentSong?.id == song.id) {
-        togglePlay();
-      } else {
-        _currentSong = song;
-        notifyListeners();
+      _currentSong = song;
+      notifyListeners();
 
-        // Naya gaana load aur play karne ka sahi tarika
-        await _audioPlayer.stop(); // Purana gaana band karo
-        await _audioPlayer.setUrl(song.audioUrl);
-        await _audioPlayer.play();
-      }
+      // Web ke liye robust logic
+      await _audioPlayer.stop();
+      await _audioPlayer.setUrl(song.audioUrl);
+      await _audioPlayer.play(); // Direct play
     } catch (e) {
-      debugPrint("Audio Error: $e");
+      debugPrint("Audio Play Error: $e");
     }
   }
 
   void togglePlay() async {
-    try {
-      if (_isPlaying) {
-        await _audioPlayer.pause();
-      } else {
-        await _audioPlayer.play();
-      }
-    } catch (e) {
-      debugPrint("Toggle Error: $e");
+    if (_audioPlayer.playing) {
+      await _audioPlayer.pause();
+    } else {
+      await _audioPlayer.play();
     }
+    notifyListeners();
+  }
+
+  void seek(Duration pos) => _audioPlayer.seek(pos);
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
   }
 }
