@@ -4,13 +4,13 @@ WORKDIR /app
 COPY . .
 
 RUN flutter pub get
-RUN flutter build web --release
+RUN flutter build web --release --base-href /
 
-FROM caddy:alpine
+FROM nginx:alpine
 
-COPY --from=build /app/build/web /usr/share/caddy
-COPY Caddyfile /etc/caddy/Caddyfile
+COPY --from=build /app/build/web /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 8080
+EXPOSE 80
 
-CMD ["caddy", "file-server", "--listen", ":8080", "--root", "/usr/share/caddy"]
+CMD ["nginx", "-g", "daemon off;"]
