@@ -11,54 +11,104 @@ class MiniPlayer extends StatelessWidget {
     if (song == null) return SizedBox.shrink();
 
     return Container(
-      height: 64,
-      width: MediaQuery.of(context).size.width * 0.95,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-        color: Color(0xFF3E3E3E),
-        borderRadius: BorderRadius.circular(8),
+        color: const Color(0xFF1A1A1E).withOpacity(0.9),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white10),
+        boxShadow: [
+          BoxShadow(color: Colors.black54, blurRadius: 20, spreadRadius: 5)
+        ],
       ),
-      child: Column(
+      child: Row(
         children: [
-          ListTile(
-            dense: true,
-            visualDensity: VisualDensity.compact,
-            leading: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: Image.network(song.coverUrl,
-                  width: 40, height: 40, fit: BoxFit.cover),
-            ),
-            title: Text(song.title,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13)),
-            subtitle: Text(song.artist,
-                style: TextStyle(color: Colors.grey, fontSize: 11)),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.cast, color: Colors.white, size: 20),
-                SizedBox(width: 15),
-                IconButton(
-                  icon: Icon(
-                      audioProvider.isPlaying ? Icons.pause : Icons.play_arrow,
-                      color: Colors.white),
-                  onPressed: audioProvider.togglePlay,
-                ),
-              ],
-            ),
+          // Album Art
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.network(song.coverUrl,
+                width: 50, height: 50, fit: BoxFit.cover),
           ),
-          // Progress Bar (Simple line)
-          Container(
-            height: 2,
-            width: MediaQuery.of(context).size.width * 0.9,
-            color: Colors.grey.withOpacity(0.3),
-            alignment: Alignment.centerLeft,
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.4, // Static for now
-              color: Colors.white,
-            ),
-          )
+          const SizedBox(width: 15),
+          // Info
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(song.title,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16)),
+              Text(song.artist,
+                  style: const TextStyle(color: Colors.grey, fontSize: 13)),
+            ],
+          ),
+          const SizedBox(width: 20),
+          const Icon(Icons.favorite_border, color: Colors.grey, size: 20),
+
+          const Spacer(),
+
+          // Controls
+          Column(
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.shuffle, color: Colors.grey, size: 20),
+                  const SizedBox(width: 20),
+                  const Icon(Icons.skip_previous, color: Colors.white),
+                  const SizedBox(width: 20),
+                  CircleAvatar(
+                    backgroundColor: Colors.white,
+                    radius: 20,
+                    child: IconButton(
+                      icon: Icon(
+                          audioProvider.isPlaying
+                              ? Icons.pause
+                              : Icons.play_arrow,
+                          color: Colors.black),
+                      onPressed: audioProvider.togglePlay,
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  const Icon(Icons.skip_next, color: Colors.white),
+                  const SizedBox(width: 20),
+                  const Icon(Icons.repeat, color: Colors.grey, size: 20),
+                ],
+              ),
+              // Seekbar Style Line
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  const Text("1:24",
+                      style: TextStyle(color: Colors.grey, fontSize: 10)),
+                  const SizedBox(width: 10),
+                  Container(
+                    width: 300,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white24,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        width: 120, // Progress
+                        decoration: BoxDecoration(
+                          color: Colors.purpleAccent,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  const Text("3:45",
+                      style: TextStyle(color: Colors.grey, fontSize: 10)),
+                ],
+              ),
+            ],
+          ),
+
+          const Spacer(),
+          const Icon(Icons.fullscreen, color: Colors.grey),
         ],
       ),
     );

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../data/song_data.dart';
 import '../providers/audio_provider.dart';
@@ -8,138 +7,86 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.blueGrey.shade900,
-              Colors.black,
-              Colors.black,
-            ],
-          ),
-        ),
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              pinned: true,
-              expandedHeight: 80,
-              flexibleSpace: FlexibleSpaceBar(
-                title: Text("Good evening",
-                    style: GoogleFonts.montserrat(
-                        fontWeight: FontWeight.bold, fontSize: 22)),
-                titlePadding: EdgeInsets.only(left: 20, bottom: 15),
-              ),
-              actions: [
-                IconButton(
-                    icon: Icon(Icons.notifications_none), onPressed: () {}),
-                IconButton(icon: Icon(Icons.history), onPressed: () {}),
-                IconButton(
-                    icon: Icon(Icons.settings_outlined), onPressed: () {}),
-                SizedBox(width: 10),
+      backgroundColor: Colors.transparent,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                RichText(
+                  text: const TextSpan(
+                    style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                    children: [
+                      TextSpan(text: "Recently "),
+                      TextSpan(
+                          text: "Played",
+                          style: TextStyle(color: Colors.purpleAccent)),
+                    ],
+                  ),
+                ),
+                TextButton(
+                    onPressed: () {},
+                    child: const Text("See all →",
+                        style: TextStyle(color: Colors.grey))),
               ],
             ),
-
-            // Top Grid (2x3) like Spotify
-            SliverPadding(
-              padding: EdgeInsets.all(16),
-              sliver: SliverGrid(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 3.5,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final song = playlist[index];
-                    return GestureDetector(
-                      onTap: () => context.read<AudioProvider>().playSong(song),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(4),
-                                  bottomLeft: Radius.circular(4)),
-                              child: Image.network(song.coverUrl,
-                                  width: 55, height: 55, fit: BoxFit.cover),
-                            ),
-                            SizedBox(width: 10),
-                            Expanded(
-                                child: Text(song.title,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 13),
-                                    overflow: TextOverflow.ellipsis)),
-                          ],
-                        ),
+            const SizedBox(height: 24),
+            // Horizontal Cards
+            SizedBox(
+              height: 280,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: playlist.length,
+                itemBuilder: (context, index) {
+                  final song = playlist[index];
+                  return GestureDetector(
+                    onTap: () => context.read<AudioProvider>().playSong(song),
+                    child: Container(
+                      width: 200,
+                      margin: const EdgeInsets.only(right: 24),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF121214),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    );
-                  },
-                  childCount: 6,
-                ),
-              ),
-            ),
-
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                child: Text("Made for you",
-                    style: GoogleFonts.montserrat(
-                        fontSize: 22, fontWeight: FontWeight.bold)),
-              ),
-            ),
-
-            // Horizontal List
-            SliverToBoxAdapter(
-              child: Container(
-                height: 220,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.only(left: 16),
-                  itemCount: playlist.length,
-                  itemBuilder: (context, index) {
-                    final song = playlist[index];
-                    return GestureDetector(
-                      onTap: () => context.read<AudioProvider>().playSong(song),
-                      child: Container(
-                        width: 150,
-                        margin: EdgeInsets.only(right: 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
                               child: Image.network(song.coverUrl,
-                                  width: 150, height: 150, fit: BoxFit.cover),
+                                  height: 170,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover),
                             ),
-                            SizedBox(height: 10),
-                            Text(song.title,
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(song.title,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 18),
                                 overflow: TextOverflow.ellipsis),
-                            Text(song.artist,
-                                style:
-                                    TextStyle(color: Colors.grey, fontSize: 12),
-                                overflow: TextOverflow.ellipsis),
-                          ],
-                        ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(song.artist,
+                                style: const TextStyle(
+                                    color: Colors.grey, fontSize: 14)),
+                          ),
+                        ],
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
             ),
-
-            SliverToBoxAdapter(
-                child: SizedBox(height: 100)), // Bottom padding for miniplayer
           ],
         ),
       ),
