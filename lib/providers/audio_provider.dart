@@ -9,7 +9,13 @@ class AudioProvider extends ChangeNotifier {
 
   Song? get currentSong => _currentSong;
   bool get isPlaying => _isPlaying;
-  AudioPlayer get player => _audioPlayer;
+
+  AudioProvider() {
+    _audioPlayer.playingStream.listen((playing) {
+      _isPlaying = playing;
+      notifyListeners();
+    });
+  }
 
   void playSong(Song song) async {
     if (_currentSong?.id == song.id) {
@@ -20,16 +26,10 @@ class AudioProvider extends ChangeNotifier {
       try {
         await _audioPlayer.setUrl(song.audioUrl);
         _audioPlayer.play();
-        _isPlaying = true;
       } catch (e) {
-        print("Error loading audio: $e");
+        print("Error: $e");
       }
     }
-
-    _audioPlayer.playingStream.listen((playing) {
-      _isPlaying = playing;
-      notifyListeners();
-    });
   }
 
   void togglePlay() {
@@ -38,7 +38,5 @@ class AudioProvider extends ChangeNotifier {
     } else {
       _audioPlayer.play();
     }
-    _isPlaying = !_isPlaying;
-    notifyListeners();
   }
 }

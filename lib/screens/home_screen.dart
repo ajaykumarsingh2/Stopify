@@ -13,35 +13,65 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Text: Recently Played
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                RichText(
-                  text: const TextSpan(
-                    style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                    children: [
-                      TextSpan(text: "Recently "),
-                      TextSpan(
-                          text: "Played",
-                          style: TextStyle(color: Colors.purpleAccent)),
-                    ],
-                  ),
-                ),
-                TextButton(
-                    onPressed: () {},
-                    child: const Text("See all →",
-                        style: TextStyle(color: Colors.grey))),
-              ],
-            ),
+            const Text("Good evening",
+                style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white)),
             const SizedBox(height: 24),
 
-            // Song Cards Grid/List
+            // Top Grid (6 Quick access songs)
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 3,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+              ),
+              itemCount: 6,
+              itemBuilder: (context, index) {
+                final song = playlist[index];
+                return GestureDetector(
+                  onTap: () => context.read<AudioProvider>().playSong(song),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white10,
+                        borderRadius: BorderRadius.circular(8)),
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(8),
+                              bottomLeft: Radius.circular(8)),
+                          child: Image.network(song.coverUrl,
+                              width: 80, height: 80, fit: BoxFit.cover),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                            child: Text(song.title,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.ellipsis)),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+
+            const SizedBox(height: 40),
+            const Text("Recently Played",
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white)),
+            const SizedBox(height: 20),
+
+            // All 15 Songs List
             SizedBox(
-              height: 280,
+              height: 250,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: playlist.length,
@@ -50,53 +80,24 @@ class HomeScreen extends StatelessWidget {
                   return GestureDetector(
                     onTap: () => context.read<AudioProvider>().playSong(song),
                     child: Container(
-                      width: 200,
+                      width: 180,
                       margin: const EdgeInsets.only(right: 24),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF121214),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              // --- YE HAI SAFE IMAGE WALA PART ---
-                              child: Image.network(
-                                song.coverUrl,
-                                height: 170,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                                // Agar image load nahi hui toh ye chalega
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    height: 170,
-                                    width: double.infinity,
-                                    color: Colors.grey.shade900,
-                                    child: const Icon(Icons.music_note,
-                                        color: Colors.purpleAccent, size: 50),
-                                  );
-                                },
-                              ),
-                            ),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(song.coverUrl,
+                                height: 180, width: 180, fit: BoxFit.cover),
                           ),
-                          // Song Title
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(song.title,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18),
-                                overflow: TextOverflow.ellipsis),
-                          ),
-                          // Artist Name
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(song.artist,
-                                style: const TextStyle(
-                                    color: Colors.grey, fontSize: 14)),
-                          ),
+                          const SizedBox(height: 12),
+                          Text(song.title,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                              overflow: TextOverflow.ellipsis),
+                          Text(song.artist,
+                              style: const TextStyle(
+                                  color: Colors.grey, fontSize: 13)),
                         ],
                       ),
                     ),
