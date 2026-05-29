@@ -1,8 +1,9 @@
-FROM ghcr.io/cirruslabs/flutter:3.32.0 AS build
+FROM ghcr.io/cirruslabs/flutter:latest AS build
 
 WORKDIR /app
 COPY . .
 
+RUN flutter clean
 RUN flutter pub get
 RUN flutter build web --release --base-href /
 
